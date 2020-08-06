@@ -80,6 +80,16 @@ def reduced_form(arr, prec):
 					prev_sign = '-'
 			if i.isnumeric() or is_double(i):
 				prev_num = i
+	i = 0
+	while i < len(sort):
+		if sort[i] == '0':
+			if i + 2 < len(sort):
+				if sort[i + 1] == '*':
+					if 'X' in sort[i + 2]:
+						del sort[i]
+						del sort[i]
+						del sort[i]
+		i += 1
 	return sort
 
 
@@ -114,6 +124,9 @@ def sort_arr(arr, degree):
 			prev_num = ''
 		if '+' in i or '-' in i:
 			prev_sign = i
+		if '-' in i:
+			if i[1:].isnumeric() or is_double(i[1:]):
+				prev_num = i[1:]
 		if i.isnumeric() or is_double(i):
 			prev_num = i
 	a = 0
@@ -121,4 +134,5 @@ def sort_arr(arr, degree):
 		if not x[a]:
 			x[a] = 0
 		a += 1
+	print(x)
 	return x

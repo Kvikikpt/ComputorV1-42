@@ -2,7 +2,7 @@
 import sys
 from src import validation
 from src import reduced
-from src import exec
+from src import do
 from src import check
 
 a = 0
@@ -35,10 +35,16 @@ if len(sys.argv) == 2 + flag:
 			x = reduced.sort_arr(arr, degree)
 			if x[0] == 0 and x[1] == 0 and x[2] == 0:
 				print('Any value will be a solution')
+			elif x[1] == 0 and x[2] == 0:
+				print('There is no possible solutions')
 			else:
 				if degree == 2 and x[2] != 0:
-					exec.exec_square(x, prec)
+					if x[1] == 0:
+						print('There\'s no solutions')
+					do.exec_square(x, prec)
 				if degree == 1 or (degree == 2 and x[2] == 0):
-					exec.exec_simple(x)
+					do.exec_simple(x)
+				if degree == 0:
+					print('The only solution is 0')
 else:
 	print('usage: [flags: -p] + [flags parameters if needed for: -p] [polynomial equation]')

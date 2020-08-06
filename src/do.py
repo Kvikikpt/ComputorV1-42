@@ -4,9 +4,14 @@ def exec_square(x, prec):
     c = x[0]
 
     disc = b ** 2 - (4 * a * c)
-    if disc >= 0:
-        xone = ((b * -1) - (disc ** (1 / 2))) / (2 * a)
-        xtwo = ((b * -1) + (disc ** (1 / 2))) / (2 * a)
+    xone = ((b * -1) - (disc ** (1 / 2))) / (2 * a)
+    xtwo = ((b * -1) + (disc ** (1 / 2))) / (2 * a)
+    if disc < 0:
+        if xone == xtwo:
+            print(f"Discriminant is strictly negative, the only solution is :\n{xone}")
+        else:
+            print(f'Discriminant is strictly negative, the two solutions are:\n{xone}\n{xtwo}')
+    else:
         xone = round(xone, prec)
         xtwo = round(xtwo, prec)
         if xone % 1 == 0:
@@ -14,11 +19,9 @@ def exec_square(x, prec):
         if xtwo % 1 == 0:
             xtwo = int(xtwo)
         if xone == xtwo:
-            print(f"Discriminant is strictly positive, the only solution is :{xone}")
+            print(f"Discriminant is strictly positive, the only solution is :\n{xone}")
         else:
             print(f'Discriminant is strictly positive, the two solutions are:\n{xone}\n{xtwo}')
-    else:
-        print('Discriminant is less then zero, there are no solutions...')
 
 
 def exec_simple(x):
