@@ -24,7 +24,7 @@ def validation(string):
 				print('Incorrect parameter format5')
 				return None
 		else:
-			if ('*' in i or '/' in i or '+' in i or '-' in i) and len(i) > 1:
+			if ('*' in i or '+' in i or '-' in i) and not (i[1:].isnumeric() or reduced.is_double(i[1:])):
 				print('Nor right sign format6')
 				return None
 			elif not ('*' in i or '/' in i or '+' in i or '-' in i or '=' in i) and not i.isnumeric() and not reduced.is_double(i):
@@ -48,7 +48,7 @@ def validation(string):
 		if 'X' in arr[a] and (a == 0 or a == 1):
 			arr = arr[0:a] + ['1'] + ['*'] + [f'{arr[a]}'] + arr[a + 1:]
 			continue
-		if 'X' in arr[a] and (arr[a - 1] != '*' or (not arr[a - 2].isnumeric() and not reduced.is_double(arr[a - 2]))):
+		if 'X' in arr[a] and (arr[a - 1] != '*' or (not arr[a - 2].isnumeric() and not reduced.is_double(arr[a - 2]))): # todo валится при тесте "-5 * X^1 = 1" (херню выводит)
 			arr = arr[0:a] + ['1'] + ['*'] + [f'{arr[a]}'] + arr[a + 1:]
 			continue
 		a += 1
