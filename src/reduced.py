@@ -1,4 +1,7 @@
-def is_double(string):
+from .utils import is_valid_number
+
+
+def is_double(string): # может понадобиться потом
 	for i in string:
 		if i.isnumeric():
 			continue
@@ -48,7 +51,7 @@ def reduced_form(arr, prec):
 					sort.append(i)
 			if '+' in i or '-' in i:
 				prev_sign = i
-			if i.isnumeric() or is_double(i):
+			if is_valid_number(i): # todo из-за этой строчки валится при -5 * x
 				prev_num = i
 		if flag:
 			if 'X' in i:
@@ -78,7 +81,7 @@ def reduced_form(arr, prec):
 					prev_sign = '+'
 				else:
 					prev_sign = '-'
-			if i.isnumeric() or is_double(i):
+			if is_valid_number(i): # todo и из-за этой возможно тоже надо проверить короче
 				prev_num = i
 	i = 0
 	while i < len(sort):
@@ -93,7 +96,7 @@ def reduced_form(arr, prec):
 	return sort
 
 
-def sort_arr(arr, degree):
+def fill_x_array(arr, degree):
 	x = [None, None, None]
 	prev_num = ''
 	prev_sign = ''
@@ -125,9 +128,9 @@ def sort_arr(arr, degree):
 		if '+' in i or '-' in i:
 			prev_sign = i
 		if '-' in i:
-			if i[1:].isnumeric() or is_double(i[1:]):
+			if is_valid_number(i[1:]): # todo вот это хз тоже поменял мб говна подкинет
 				prev_num = i[1:]
-		if i.isnumeric() or is_double(i):
+		if is_valid_number(i): # todo как и эта
 			prev_num = i
 	a = 0
 	while a < len(x):

@@ -1,4 +1,4 @@
-from src import reduced
+from .utils import is_valid_number
 
 
 def check_degree(arr):
@@ -10,7 +10,7 @@ def check_degree(arr):
                 if letter.isnumeric():
                     if int(letter) > degree and float(last_num) != 0:
                         degree = int(letter)
-        if i.isnumeric() or reduced.is_double(i):
+        if is_valid_number(i):
             last_num = i
     if degree == -1:
         for i in arr:
