@@ -48,3 +48,6 @@ if len(sys.argv) == 2 + flag:
 					print('The only solution is 0')
 else:
 	print('usage: [flags: -p] + [flags parameters if needed for: -p] [polynomial equation]')
+
+
+# ((\d+|\d+(\.|,)\d+)\s\*\sX\^[0-2])+ regex
