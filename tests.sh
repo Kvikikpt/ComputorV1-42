@@ -1,0 +1,26 @@
+#!/bin/sh
+echo "Start computor testing"
+echo
+echo "Main tests:"
+echo
+echo "-----------------"
+echo "5 * X^0 = 5 * X^0"
+node main.js "5 * X^0 = 5 * X^0"
+echo "-----------------"
+echo "4 * X^0 = 8 * X^0"
+node main.js "4 * X^0 = 8 * X^0"
+echo "-----------------"
+echo "5 * X^0 = 4 * X^0 + 7 * X^1"
+node main.js "5 * X^0 = 4 * X^0 + 7 * X^1"
+echo "-----------------"
+echo "5 * X^0 + 13 * X^1 + 3 * X^2 = 1 * X^0 + 1 * X^1"
+node main.js "5 * X^0 + 13 * X^1 + 3 * X^2 = 1 * X^0 + 1 * X^1"
+echo "-----------------"
+echo "6 * X^0 + 11 * X^1 + 5 * X^2 = 1 * X^0 + 1 * X^1"
+node main.js "6 * X^0 + 11 * X^1 + 5 * X^2 = 1 * X^0 + 1 * X^1"
+echo "-----------------"
+echo "5 * X^0 + 3 * X^1 + 3 * X^2 = 1 * X^0 + 0 * X^1"
+node main.js "5 * X^0 + 3 * X^1 + 3 * X^2 = 1 * X^0 + 0 * X^1"
+echo "-----------------"
+echo
+echo "Bonus tests:"
