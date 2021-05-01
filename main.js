@@ -58,16 +58,16 @@ function exec_simple(a, b, precision, showProcess) {
 
 function validateXstring(string, expression) {
     string = string.trim();
-    if (/^((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string} * X^0`;
+    if (/^\-?((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string} * X^0`;
     if (/^[x,X]$/.test(string)) string = '1 * X^1';
-    if (/^((\d*)|(\d*[\.,\,]\d*)) *\* *[x,X]$/.test(string)) string = `${string.split(/ *\* */)[0]} * X^1`;
-    if (/^[x,X] *\* *((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string.split(/ *\* */)[1]} * X^1`;
-    if (/^[x,X]\^((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `1 * ${string}`;
-    if (/^[X,x]\^((\d*)|(\d*[\.,\,]\d*)) *\* *((\d*)|(\d*[\.,\,]\d*))$/.test(string))
+    if (/^\-?((\d*)|(\d*[\.,\,]\d*)) *\* *[x,X]$/.test(string)) string = `${string.split(/ *\* */)[0]} * X^1`;
+    if (/^[x,X] *\* *\-?((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string.split(/ *\* */)[1]} * X^1`;
+    if (/^[x,X]\^\-?((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `1 * ${string}`;
+    if (/^[X,x]\^\-?((\d*)|(\d*[\.,\,]\d*)) *\* *\-?((\d*)|(\d*[\.,\,]\d*))$/.test(string))
         string = `${string.split(/ *\* */)[1]} * ${string.split(/ *\* */)[0]}`;
-    if (/^((\d*)|(\d*[\.,\,]\d*))[x,X]$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^1`;
-    if (/^((\d*)|(\d*[\.,\,]\d*))[x,X]\^\d*$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^${string.split(/\^/)[1]}`;
-    if (!/^((\d*)|(\d*[\.,\,]\d*)) *\* *[X,x]\^((\d*)|(\d*[\.,\,]\d*))$/.test(string))
+    if (/^\-?((\d*)|(\d*[\.,\,]\d*))[x,X]$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^1`;
+    if (/^\-?((\d*)|(\d*[\.,\,]\d*))[x,X]\^\d*$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^${string.split(/\^/)[1]}`;
+    if (!/^\-?((\d*)|(\d*[\.,\,]\d*)) *\* *[X,x]\^\-?((\d*)|(\d*[\.,\,]\d*))$/.test(string))
         throw new Error(`Validation error: ${expression.split(string)[0]}\x1b[41m${string}\x1b[0m${expression.split(string[1])}`);
     let [number, x] = string.split(/ *\* */);
     number = Number(number);
@@ -79,9 +79,12 @@ function validateXstring(string, expression) {
 
 function arrayValidation(array, expression) {
     let xArrays = {};
+    if (/ *\- *\-/.test(array)) array = array.split(/ *- *-/)[0] + ' + ' + array.split(/ *- *-/)[1]
+    if (/ *\+ *\-/.test(array)) array = array.split(/ *- *\+/)[0] + ' - ' + array.split(/ *- *\+/)[1]
+    if (/ *\+ *\-/.test(array)) array = array.split(/ *- *\+/)[0] + ' - ' + array.split(/ *- *\+/)[1]
     array.split(/ *\+ */)
         .map(splitted_plus => {
-            let [plus, minus] = splitted_plus.split(/ *\- */);
+            let [plus, minus] = splitted_plus.trim().split(/(?<!^) *\- */).filter(item => Boolean(item));
             let validPlus = validateXstring(plus, expression);
             if (!xArrays[validPlus.xValue]) xArrays[validPlus.xValue] = [];
             xArrays[validPlus.xValue].push({
@@ -179,5 +182,5 @@ try {
     exec();
 }
 catch (e) {
-    console.log(e.message || 'Unknown error');
+    validPrint(e.message || 'Unknown error');
 }
