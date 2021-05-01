@@ -12,14 +12,36 @@ function square(x) {
     return result;
 }
 
-function exec_square(a, b, c, precision) {
+function exec_square(a, b, c, precision, showProcess) {
+    if (showProcess) validPrint(`a:${a} b:${b} c:${c}`);
     let disc = b ** 2 - (4 * a * c);
-    if (disc < 0)
-        return validPrint('Discriminant is negative, there\'s no any solutions');
-    if (disc === 0)
-        return validPrint(`Discriminant is 0, the only solution is\n${((b * -1) / (2 * a)).toPrecision(precision)}`);
+    if (showProcess) {
+        validPrint(`Discriminant solution: ${b}^2 - (4 * ${a} * ${c})`);
+        validPrint(`Discriminant: ${disc}`);
+    }
+    if (disc === 0) {
+        let solution = ((b * -1) / (2 * a)).toPrecision(precision);
+        validPrint(`Discriminant is 0, the only solution is:`);
+        if (showProcess) validPrint(`Solution: (${b} * -1) / (2 * ${a})`);
+        if (showProcess) validPrint(`Result: ${solution}`);
+        else validPrint(solution);
+        return;
+    }
+    if (disc < 0) {
+        validPrint(`Discriminant is strictly negative, the two solutions are:`);
+        let leftPart = (-1 * b) / (2 * a);
+        let rightPart = square(-1 * disc) / (2 * a);
+        if (showProcess) validPrint(`Solution: (-1 * ${b} +/- square(-1 * ${disc}) * i) / (2 * ${a})`);
+        if (showProcess) validPrint(`Reduced solution: ((${(-1 * b) / (2 * a)}) +/- (${square(-1 * disc)} * i / ${2 * a}))`);
+        if (showProcess) validPrint(`Result:`);
+        validPrint(`${leftPart.toPrecision(precision)}` + ` - ` + `${rightPart.toPrecision(precision)} * i`);
+        validPrint(`${leftPart.toPrecision(precision)}` + ` + ` + `${rightPart.toPrecision(precision)} * i`);
+        return;
+    }
     let xone = ((b * -1) - square(disc)) / (2 * a);
     let xtwo = ((b * -1) + square(disc)) / (2 * a);
+    if (showProcess) validPrint(`Solution: ((${b} * -1) +/- (square(${disc})) / 2 * ${a}`);
+    if (showProcess) validPrint(`Reduced solution: ((${b  * -1} +/- ${square(disc)}) / ${a * 2}`);
     xone = xone.toPrecision(precision);
     xtwo = xtwo.toPrecision(precision);
     if (xone === xtwo)
@@ -28,41 +50,46 @@ function exec_square(a, b, c, precision) {
         validPrint(`Discriminant is strictly positive, the two solutions are:\n${xone}\n${xtwo}`);
 }
 
-function exec_simple(a, b, precision) {
+function exec_simple(a, b, precision, showProcess) {
+    if (showProcess) validPrint(`Solution expression: (${b} * -1) / ${a}`);
+    if (showProcess) validPrint(`Reduced: ${b * -1} / ${a}`);
     validPrint(`The solution is:\n${((b * -1) / a).toPrecision(precision)}`);
 }
 
-function validateXstring(string) {
-    if (/^\d*$/.test(string)) string = `${string} * X^0`;
+function validateXstring(string, expression) {
+    string = string.trim();
+    if (/^((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string} * X^0`;
     if (/^[x,X]$/.test(string)) string = '1 * X^1';
-    if (/^\d* *\* *[x,X]$/.test(string)) string = `${string.split(/ *\* */)[0]} * X^1`;
-    if (/^[x,X] *\* *\d*$/.test(string)) string = `${string.split(/ *\* */)[1]} * X^1`;
-    if (/^[x,X]\^\d*$/.test(string)) string = `1 * ${string}`;
-    if (/^[X,x]\^\d* *\* *\d*$/.test(string)) string = `${string.split(/ *\* */)[1]} * ${string.split(/ *\* */)[0]}`;
-    if (/^\d*[x,X]$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^1`;
-    if (!/^\d* *\* *[X,x]\^\d*$/.test(string))
-        throw new Error(`Validation error: ${string}`);
+    if (/^((\d*)|(\d*[\.,\,]\d*)) *\* *[x,X]$/.test(string)) string = `${string.split(/ *\* */)[0]} * X^1`;
+    if (/^[x,X] *\* *((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `${string.split(/ *\* */)[1]} * X^1`;
+    if (/^[x,X]\^((\d*)|(\d*[\.,\,]\d*))$/.test(string)) string = `1 * ${string}`;
+    if (/^[X,x]\^((\d*)|(\d*[\.,\,]\d*)) *\* *((\d*)|(\d*[\.,\,]\d*))$/.test(string))
+        string = `${string.split(/ *\* */)[1]} * ${string.split(/ *\* */)[0]}`;
+    if (/^((\d*)|(\d*[\.,\,]\d*))[x,X]$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^1`;
+    if (/^((\d*)|(\d*[\.,\,]\d*))[x,X]\^\d*$/.test(string)) string = `${string.split(/[x,X]/)[0]} * X^${string.split(/\^/)[1]}`;
+    if (!/^((\d*)|(\d*[\.,\,]\d*)) *\* *[X,x]\^((\d*)|(\d*[\.,\,]\d*))$/.test(string))
+        throw new Error(`Validation error: ${expression.split(string)[0]}\x1b[41m${string}\x1b[0m${expression.split(string[1])}`);
     let [number, x] = string.split(/ *\* */);
     number = Number(number);
-    if (!Number.isSafeInteger(number))
+    if (Number.isInteger(number) && !Number.isSafeInteger(number))
         throw new Error(`Number is too big, the precision may be broken`);
     let xValue = x.split(/\^/)[1];
     return {number, xValue};
 }
 
-function arrayValidation(array) {
+function arrayValidation(array, expression) {
     let xArrays = {};
     array.split(/ *\+ */)
         .map(splitted_plus => {
             let [plus, minus] = splitted_plus.split(/ *\- */);
-            let validPlus = validateXstring(plus);
+            let validPlus = validateXstring(plus, expression);
             if (!xArrays[validPlus.xValue]) xArrays[validPlus.xValue] = [];
             xArrays[validPlus.xValue].push({
                 value: validPlus.number,
                 sign: true
             });
             if (minus) {
-                let validMinus = validateXstring(minus);
+                let validMinus = validateXstring(minus, expression);
                 if (!xArrays[validMinus.xValue]) xArrays[validMinus.xValue] = [];
                 xArrays[validMinus.xValue].push({
                     value: validMinus.number,
@@ -78,8 +105,8 @@ function exec() {
     const args = process.argv.slice(2);
 
     let a = 0;
-    let flag = 0;
     let prec;
+    let showProcess = false;
 
     while (a < args.length) {
         if (args[a].indexOf('-p') !== -1) {
@@ -87,23 +114,25 @@ function exec() {
             if (isNaN(prec))
                 throw new Error('Not right usage of prec flag.');
             if (prec < 1 || prec > 100) throw new Error("Invalid precision parameter, need 1 - 100");
-            if (a === 0) flag = 2;
-            else if (a === 1) flag = 0;
-            else
-                throw new Error('Not right usage of prec flag.');
-            a += 1;
+            args.splice(a, 2);
+            continue;
+        }
+        if (args[a].indexOf('-s') !== -1) {
+            showProcess = true;
+            args.splice(a, 1);
+            continue;
         }
         a += 1;
     }
 
-    if (!prec && args.length > 1) throw new Error('Too much params.');
+    if (args.length > 1) throw new Error('Too much params.');
 
-    if (typeof flag !== 'undefined') {
-        let expression = args[flag];
+    if (args.length === 1) {
+        let expression = args[0];
         if (typeof expression !== "string") throw new Error('No expression passed.');
-        let splitted = expression.split(' = ');
+        let splitted = expression.split('=');
         if (splitted.length !== 2) throw new Error('Invalid expression passed.');
-        const [left, right] = splitted.map(array => arrayValidation(array))
+        const [left, right] = splitted.map(array => arrayValidation(array, expression))
         let xObj = {};
         for (let key in left) {
             if (!xObj[key]) xObj[key] = 0;
@@ -140,8 +169,8 @@ function exec() {
         if (degree === '0')
             throw new Error("There's no possible solutions.");
         if (degree === "2" && xKeys.length === 1) return validPrint('The only solution is 0.');
-        if (degree === "1") return exec_simple(xObj['1'] || 0, xObj['0'] || 0,  prec);
-        return exec_square(xObj['2'] || 0, xObj['1'] || 0, xObj['0'] || 0, prec);
+        if (degree === "1") return exec_simple(xObj['1'] || 0, xObj['0'] || 0,  prec, showProcess);
+        return exec_square(xObj['2'] || 0, xObj['1'] || 0, xObj['0'] || 0, prec, showProcess);
     }
     else throw new Error('usage: [flags: -p + {1 - 100}]');
 }
