@@ -32,7 +32,6 @@ function exec_simple(a, b, precision) {
     validPrint(`The solution is:\n${((b * -1) / a).toPrecision(precision)}`);
 }
 
-
 function validateXstring(string) {
     if (/^\d*$/.test(string)) string = `${string} * X^0`;
     if (/^[x,X]$/.test(string)) string = '1 * X^1';
